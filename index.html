@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brazilian E-Commerce Analytics Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#0a1020;--card:#101a30;--line:#1d2b4a;--ink:#e8eefc;--mute:#8fa0c4;--blue:#2f8cff;--cyan:#22d3ee;--vio:#8b7bff;--amb:#f5a524;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#12234a,var(--bg));background-color:var(--bg);color:var(--ink);font:15px/1.5 "Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+button,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);padding:28px 16px;display:flex;flex-direction:column;gap:6px}
+aside h1{font-size:20px;font-weight:600;margin:0 0 2px}aside p{margin:0 0 20px;color:var(--mute);font-size:13px}
+.nav{background:none;border:0;text-align:left;padding:10px 14px;border-radius:8px;color:var(--mute);cursor:pointer}
+.nav:hover{color:var(--ink)}.nav[aria-current=true]{background:linear-gradient(90deg,#1b55b8,#1a3f86);color:#fff}
+.ins{margin-top:22px;border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--card);font-size:13px}
+.ins b{display:block;margin-bottom:8px;font-size:14px}.ins li{margin:0 0 8px;list-style:none;padding-left:18px;position:relative}.ins li::before{content:"✓";color:var(--cyan);position:absolute;left:0}.ins ul{margin:0;padding:0}
+main{padding:28px 28px 64px;min-width:0}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:22px}
+.top h2{font-size:clamp(22px,3vw,30px);margin:0;font-weight:600;letter-spacing:-.01em}.top p{margin:2px 0 0;color:var(--mute);font-style:italic}
+.ctl{display:flex;gap:10px;flex-wrap:wrap}
+select,.btn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;cursor:pointer}
+select:disabled{opacity:.45;cursor:not-allowed}.btn:hover{border-color:var(--blue)}.btn[aria-pressed=true]{border-color:var(--cyan);color:var(--cyan)}
+.banner{background:#2a2108;border:1px solid #5b4a12;color:#f3d27a;border-radius:10px;padding:8px 14px;font-size:13px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px}
+.kpi,.card{background:linear-gradient(180deg,#12203d,var(--card));border:1px solid var(--line);border-radius:14px;padding:18px}
+.kpi span{color:var(--mute);font-size:13px}.kpi b{display:block;font-size:28px;font-weight:600;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card h3{margin:0;font-size:16px;font-weight:600}.sel{color:var(--cyan);font-size:13px;min-height:20px;margin:2px 0 10px}
+.cv{position:relative;height:230px;margin-bottom:6px}.cv.t{height:170px}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.chips div{background:#0d1730;border:1px solid var(--line);border-radius:10px;padding:10px}
+.chips span{color:var(--mute);font-size:12px;display:block}.chips b{font-size:20px;font-weight:600}
+.empty{color:var(--mute);font-size:14px;border:1px dashed var(--line);border-radius:10px;padding:18px;margin:6px 0}
+details{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--card)}summary{cursor:pointer;color:var(--mute)}
+textarea{width:100%;min-height:130px;margin:12px 0 8px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.note{color:var(--mute);font-size:13px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);flex-direction:row;flex-wrap:wrap;padding:16px}aside h1,aside p,.ins{display:none}main{padding:20px 16px 56px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body><div class="layout">
+<aside><h1>olist</h1><p>Brazilian E-Commerce<br>2016 – 2018</p><div id="nav"></div>
+<div class="ins"><b>Key insights</b><ul id="ins"></ul></div></aside>
+<main>
+<div class="top"><div><h2>E-Commerce Sales and Customer Behaviour Analysis</h2><p>Turning data into actionable business insights</p></div>
+<div class="ctl"><select id="fy" aria-label="Year"></select><select id="fs" aria-label="State"></select>
+<button class="btn" id="sm" aria-pressed="false">Preview sample data</button><button class="btn" id="rs">Reset</button></div></div>
+<div class="banner" id="bn" hidden>Sample data for previewing the layout. These figures are illustrative and not from your analysis.</div>
+<div class="kpis" id="kpis"></div><div class="grid" id="grid"></div>
+<details id="ld"><summary>Load your query results</summary>
+<p class="note">Paste blocks with the label on its own line, then two columns (name, value). Labels: monthly_revenue (R$), top_categories (R$), payments (R$), top_sellers (R$), delivery_by_state (on-time %), review_distribution (% by star), purchase_behaviour (% of customers).</p>
+<textarea id="ta" aria-label="CSV data" placeholder="top_categories&#10;category,revenue&#10;beleza_saude,1230000"></textarea><button class="btn" id="go">Load data</button></details>
+</main></div>
+<script>
+const UNIT={monthly:'R$',cats:'R$',pay:'R$',sellers:'R$',states:'%',stars:'%',buy:'%',cust:'',tim:''};
+const REAL={cust:[{l:'One-time',v:90557},{l:'Repeat',v:2801}],cats:[{l:'beleza_saude',v:1230000}],pay:[{l:'Credit card',v:12540000}],tim:[{l:'Early',v:4.29},{l:'Late',v:2.57}],dl:{avg:12.5,late:6.77}};
+const mo=Array.from({length:24},(_,i)=>({l:`${2017+Math.floor(i/12)}-${String(i%12+1).padStart(2,'0')}`,v:300000+i*35000+(i%5)*20000}));
+const SAMPLE={monthly:mo,cats:[['beleza_saude',1230000],['informatica_acessorios',1120000],['moveis_decoracao',1080000],['utilidades_domesticas',1010000],['esporte_lazer',940000]].map(([l,v])=>({l,v})),
+ pay:[['Credit card',12540000],['Boleto',3300000],['Debit card',1650000],['Others',620000]].map(([l,v])=>({l,v})),
+ sellers:[1240000,1120000,980000,870000,790000].map((v,i)=>({l:'Seller '+(i+1),v})),
+ states:[['SP',96.8],['RJ',94.7],['MG',93.1],['PR',91.9],['BA',89.5]].map(([l,v])=>({l,v})),
+ stars:[['1★',3.2],['2★',7.1],['3★',16.8],['4★',40.1],['5★',32.8]].map(([l,v])=>({l,v})),
+ buy:[['1 purchase',97],['2–3 purchases',2.5],['4+ purchases',.5]].map(([l,v])=>({l,v}))};
+const MAP={monthly_revenue:'monthly',top_categories:'cats',payments:'pay',top_sellers:'sellers',delivery_by_state:'states',review_distribution:'stars',purchase_behaviour:'buy'};
+let L={},SAM=false,F={year:'',state:''},view='overview',CH={},first=true,SEL={};
+const $=id=>document.getElementById(id),get=k=>L[k]||(SAM&&SAMPLE[k])||REAL[k]||null;
+const money=n=>'R$'+(n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':n.toFixed(0));
+const fmt=(v,k)=>UNIT[k]==='R$'?money(v):UNIT[k]==='%'?v+'%':v.toLocaleString('en-US',{maximumFractionDigits:2});
+const N=v=>{const x=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(x)?0:x};
+Chart.defaults.color='#8fa0c4';Chart.defaults.borderColor='#1d2b4a';Chart.defaults.font.family='"Hanken Grotesk",system-ui,sans-serif';
+function parse(t){let cur=null,b={};t.split(/\r?\n/).forEach(l=>{const m=l.trim().replace(/^[#\s]+/,'').replace(/:$/,'').toLowerCase();if(MAP[m]){cur=MAP[m];b[cur]=[]}else if(cur&&l.trim())b[cur].push(l.split(',').map(s=>s.trim().replace(/^"|"$/g,'')))});
+ for(const k in b){const r=b[k].slice(1).map(c=>({l:c[0],v:N(c[1])})).filter(x=>x.l);if(r.length)L[k]=r}}
+function mk(id,cfg){CH[id]?.destroy();const c=$(id);if(!c)return;cfg.options={responsive:true,maintainAspectRatio:false,animation:first?{duration:800}:false,...cfg.options,plugins:{legend:{display:false},...(cfg.options||{}).plugins}};CH[id]=new Chart(c,cfg)}
+const PAL=['#2f8cff','#22d3ee','#8b7bff','#f5a524','#5b6b92'];
+function hb(id,k,d,hi,click,horiz=true){mk(id,{type:'bar',data:{labels:d.map(x=>x.l),datasets:[{data:d.map(x=>x.v),borderRadius:5,backgroundColor:d.map((x,i)=>hi!=null&&hi!==i?'#27406f':PAL[0])}]},
+ options:{indexAxis:horiz?'y':'x',onClick:(e,el)=>{if(el.length)click(el[0].index)},onHover:(e,el)=>{e.native.target.style.cursor=el.length?'pointer':'default'},
+ plugins:{tooltip:{callbacks:{label:c=>' '+fmt(c.parsed[horiz?'x':'y'],k)}}},scales:{x:{grid:{display:!horiz}},y:{grid:{display:horiz}}}}})}
+function dn(id,k,d,click){mk(id,{type:'doughnut',data:{labels:d.map(x=>x.l),datasets:[{data:d.map(x=>x.v),backgroundColor:PAL,borderColor:'#101a30',borderWidth:3}]},
+ options:{cutout:'62%',plugins:{legend:{display:true,position:'right'},tooltip:{callbacks:{label:c=>' '+fmt(c.parsed,k)}}},onClick:(e,el)=>{if(el.length)click(el[0].index)}}})}
+const empty=n=>`<p class="empty">No ${n} data yet. Load the query results below or preview sample data.</p>`;
+const cv=(id,c='')=>`<div class="cv ${c}"><canvas id="${id}"></canvas></div>`;
+const card=(s,t,b)=>`<div class="card" data-s="${s}"><h3>${t}</h3><div class="sel" id="sel-${s}">${SEL[s]||''}</div>${b}</div>`;
+const pick=(s,txt)=>{SEL[s]=txt;$('sel-'+s).textContent=txt};
+function render(){const Q=[];let h='';
+ const cust=get('cust'),cats=get('cats'),pay=get('pay'),m0=get('monthly'),sel=get('sellers'),st=get('states'),stars=get('stars'),buy=get('buy'),tim=get('tim'),dl=REAL.dl;
+ const yrs=m0?[...new Set(m0.map(r=>r.l.slice(0,4)))].sort():[];
+ $('fy').innerHTML='<option value="">All years</option>'+yrs.map(y=>`<option>${y}</option>`).join('');$('fy').value=F.year;$('fy').disabled=!yrs.length;
+ $('fs').innerHTML='<option value="">All states</option>'+(st||[]).map(x=>`<option>${x.l}</option>`).join('');$('fs').value=F.state;$('fs').disabled=!st;
+ const m=m0?m0.filter(r=>!F.year||r.l.startsWith(F.year)):null;
+ /* KPIs and insights from the active data */
+ const tot=cust.reduce((t,x)=>t+x.v,0),topC=[...cats].sort((a,b)=>b.v-a.v)[0],topP=[...pay].sort((a,b)=>b.v-a.v)[0];
+ $('kpis').innerHTML=[['Total customers',tot.toLocaleString()],['Top category revenue',money(topC.v)],[topP.l+' payment value',money(topP.v)],['Average delivery time',dl.avg.toFixed(2)+' days']].map(k=>`<div class="kpi"><span>${k[0]}</span><b>${k[1]}</b></div>`).join('');
+ const rep=cust.find(x=>/repeat/i.test(x.l)),one=100-rep.v/tot*100;
+ $('ins').innerHTML=[`${topC.l.replace(/_/g,' ')} is the top revenue category (${money(topC.v)}).`,`${one.toFixed(0)}% of customers bought only once.`,`${dl.late}% of orders were late.`,`Early deliveries scored ${tim[0].v} vs ${tim[1].v} for late.`].map(x=>`<li>${x}</li>`).join('');
+ /* cards */
+ h+=card('sales','Executive sales overview',(m?(m.length?cv('c-m'):empty('matching')):empty('monthly revenue'))+(cats?cv('c-c','t'):''));
+ Q.push(()=>{if(m&&m.length)mk('c-m',{type:'line',data:{labels:m.map(r=>r.l),datasets:[{data:m.map(r=>r.v),borderColor:PAL[0],backgroundColor:'rgba(47,140,255,.15)',fill:true,tension:.35,pointRadius:2}]},options:{interaction:{mode:'index',intersect:false},plugins:{tooltip:{callbacks:{label:c=>' '+money(c.parsed.y)}}},onClick:(e,el)=>{if(el.length)pick('sales',m[el[0].index].l+': '+money(m[el[0].index].v))}}});
+  if(cats){const d=[...cats].sort((a,b)=>b.v-a.v).slice(0,10);hb('c-c','cats',d,SEL.cat,i=>{SEL.cat=SEL.cat===i?null:i;pick('sales',SEL.cat==null?'':d[i].l+': '+money(d[i].v));render()})}});
+ h+=card('customers','Customer analysis',cv('c-g','t')+(buy?cv('c-b','t'):''));
+ Q.push(()=>{dn('c-g','cust',cust,i=>pick('customers',cust[i].l+': '+cust[i].v.toLocaleString()+' customers ('+(cust[i].v/tot*100).toFixed(1)+'%)'));if(buy)hb('c-b','buy',buy,null,i=>pick('customers',buy[i].l+': '+buy[i].v+'% of customers'),false)});
+ h+=card('delivery','Delivery performance',`<div class="chips"><div><span>Average delivery time</span><b>${dl.avg.toFixed(2)} days</b></div><div><span>On-time delivery</span><b>${(100-dl.late).toFixed(2)}%</b></div><div><span>Late deliveries</span><b>${dl.late}%</b></div></div>`+(st?cv('c-s','t'):empty('state delivery')));
+ Q.push(()=>{if(st){const i0=st.findIndex(x=>x.l===F.state);hb('c-s','states',st,i0<0?null:i0,i=>{F.state=F.state===st[i].l?'':st[i].l;$('fs').value=F.state;pick('delivery',F.state?st[i].l+': '+st[i].v+'% on time':'');render()},false)}});
+ h+=card('payments','Payment methods',cv('c-p','t'));Q.push(()=>pay.length>1?dn('c-p','pay',pay,i=>pick('payments',pay[i].l+': '+money(pay[i].v))):hb('c-p','pay',pay,null,i=>pick('payments',pay[i].l+': '+money(pay[i].v))));
+ h+=card('sellers','Top sellers by revenue',sel?cv('c-k','t'):empty('seller'));Q.push(()=>{if(sel)hb('c-k','sellers',[...sel].sort((a,b)=>b.v-a.v).slice(0,10),null,i=>pick('sellers',sel[i].l+': '+money(sel[i].v)))});
+ h+=card('reviews','Customer satisfaction',cv('c-t','t')+(stars?cv('c-r','t'):''));
+ Q.push(()=>{mk('c-t',{type:'bar',data:{labels:tim.map(x=>x.l),datasets:[{data:tim.map(x=>x.v),borderRadius:5,backgroundColor:[PAL[0],PAL[3]]}]},options:{onClick:(e,el)=>{if(el.length)pick('reviews',tim[el[0].index].l+' deliveries: average score '+tim[el[0].index].v)},scales:{y:{min:0,max:5}}}});if(stars)hb('c-r','stars',stars,null,i=>pick('reviews',stars[i].l+': '+stars[i].v+'% of reviews'),false)});
+ $('grid').innerHTML=h;document.querySelectorAll('.card').forEach(c=>c.hidden=!(view==='overview'||c.dataset.s===view||(view==='sales'&&c.dataset.s==='sales')));
+ $('bn').hidden=!SAM;Q.forEach(f=>f());first=false}
+const NAV=[['overview','Overview'],['sales','Sales'],['customers','Customers'],['delivery','Delivery'],['sellers','Sellers'],['payments','Payments'],['reviews','Reviews']];
+$('nav').innerHTML=NAV.map(n=>`<button class="nav" data-n="${n[0]}" style="display:block;width:100%">${n[1]}</button>`).join('');
+function nav(){document.querySelectorAll('.nav').forEach(b=>b.setAttribute('aria-current',b.dataset.n===view))}
+$('nav').onclick=e=>{const n=e.target.dataset.n;if(n){view=n;nav();render()}};
+$('fy').onchange=e=>{F.year=e.target.value;render()};$('fs').onchange=e=>{F.state=e.target.value;render()};
+$('sm').onclick=e=>{SAM=!SAM;e.target.setAttribute('aria-pressed',SAM);render()};
+$('rs').onclick=()=>{F={year:'',state:''};SEL={};render()};
+$('go').onclick=()=>{parse($('ta').value);$('ld').open=false;render()};
+nav();render();
+</script></body></html>
