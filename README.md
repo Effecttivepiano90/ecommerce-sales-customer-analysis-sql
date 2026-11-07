@@ -80,7 +80,7 @@ The analysis uses multiple datasets, including:
 
 ## Key Business Insights
 
-- **Sales Performance:** Beauty and health products generated the highest category revenue, at approximately R$1.23 million.
+- **Sales Performance:** Beauty and health (beleza_saude) was the highest-revenue product category, generating approximately R$1.23 million in item sales.
 - **Customer Behaviour:** The dataset contained 90,557 one-time customers and 2,801 repeat customers among delivered-order customers.
 - **Delivery Performance:** Average delivery time was approximately 12.50 days. Around 6.77% of delivered orders were late compared with their estimated delivery dates.
 - **Payment Behaviour:** Credit cards were the most frequently used payment method, accounting for approximately R$12.54 million in recorded payment value.
@@ -93,6 +93,7 @@ The analysis uses multiple datasets, including:
 - Product revenue is calculated using item prices and does not represent profit.
 - Delivery performance analysis focuses on delivered orders.
 - Customer reviews are associated with orders, so category-level review comparisons may include the same order review across multiple product categories.
+- The `customers_clean` table was created separately by removing duplicate customer records from the original customer dataset.
 
 ## Project Files
 
