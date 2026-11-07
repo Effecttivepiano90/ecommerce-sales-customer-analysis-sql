@@ -103,3 +103,25 @@ The analysis uses multiple datasets, including:
 This project demonstrates how SQL can be used to transform raw e-commerce data into meaningful business insights. Through data cleaning, joins, aggregations, CTEs, and window functions, the analysis explores important aspects of sales, customers, sellers, payments, delivery performance, and customer satisfaction.
 
 The project helped develop practical SQL skills and an understanding of how data analysis can support business decision-making.
+
+## SQL Query Screenshots
+
+The following screenshots demonstrate the SQL queries and their execution results.
+
+### 1. Sales Analysis
+![Sales Analysis](01_sales_analysis.png)
+
+### 2. Customer Behaviour Analysis
+![Customer Analysis](02_customer_analysis.png)
+
+### 3. Delivery Performance Analysis
+![Delivery Analysis](03_delivery_analysis.png)
+
+### 4. Seller Performance Analysis
+![Seller Analysis](04_seller_analysis.png)
+
+### 5. Payment Analysis
+![Payment Analysis](05_payment_analysis.png)
+
+### 6. Customer Satisfaction Analysis
+![Customer Satisfaction](06_customer_satisfaction.png)
